@@ -19,7 +19,7 @@ iptables -t nat --flush
 iptables --flush
 
 yum install -y https://rdoproject.org/repos/rdo-release.rpm
-yum install -y openstack-packstack vim rsync screen make git puppet
+yum install -y vim rsync screen make git puppet
 yum update -y
 
 puppet module list 2>/dev/null | grep midonet-midonet || puppet module install midonet-midonet
