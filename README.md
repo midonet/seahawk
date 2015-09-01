@@ -2,14 +2,27 @@
 Follow https://www.rdoproject.org/Quickstart to install the machine with packstack, optionally adding compute nodes:
 
 ```
-systemctl stop NetworkManager
-systemctl disable NetworkManager
-systemctl enable network
-yum update -y
+cat>/etc/selinux/config <<EOF
+SELINUX=disabled
+SELINUXTYPE=targeted
+EOF
+
+for SERVICE in NetworkManager firewalld; do
+  systemctl stop ${SERVICE}
+  systemctl disable ${SERVICE}
+done
+
+iptables -t nat --flush
+iptables --flush
+
 yum install -y https://rdoproject.org/repos/rdo-release.rpm
 yum install -y openstack-packstack
-
+yum update -y
 ```
+
+You should now reboot the machine to make sure SELinux is off.
+
+After that you can continue with the packstack answer file generation and the installation of packstack.
 
 You now have to git clone this repository to the box.
 
