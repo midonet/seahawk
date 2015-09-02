@@ -33,7 +33,16 @@ git clone https://github.com/midonet/seahawk.git
 ```
 Modify the file '/root/seahawk/conf/gateways.txt' and enter the ips of where you want to run the midonet gateways.
 
-After you have edited the gateways.txt run the script for converting the box to MidoNet:
+You must have valid MEM credentials to run this script:
+```
+[root@seahawk1 seahawk(keystone_admin)]# cat /root/.bashrc
+# .bashrc
+
+export OS_MIDOKURA_REPOSITORY_USER=xxx
+export OS_MIDOKURA_REPOSITORY_PASS=yyy
+```
+
+After you have edited the gateways.txt and added the environment variables run the script for converting the box to MidoNet:
 ```
 [root@seahawk seahawk]# pwd
 /root/seahawk

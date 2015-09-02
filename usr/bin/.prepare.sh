@@ -4,7 +4,7 @@ SELINUX=disabled
 SELINUXTYPE=targeted
 EOF
 
-for SERVICE in NetworkManager firewalld; do
+for SERVICE in NetworkManager firewalld neutron-openvswitch-agent openvswitch-nonetwork openvswitch neutron-l3-agent; do
   systemctl stop ${SERVICE}
   systemctl disable ${SERVICE}
 done

@@ -1,6 +1,4 @@
 
-IP="$(ip addr show | grep 'inet ' | grep -v 'inet 127.0' | head -n1 | awk '{print $2;}' | awk -F'/' '{print $1;}')"
-
 #
 # java
 #
@@ -167,6 +165,21 @@ systemctl restart cassandra.service || systemctl start cassandra.service
 sleep 10
 
 for CS_IP in ${NSDB}; do
+    for BACKOFF in $(seq 1 10); do
+        #
+        # return if the host is found in the nodetool list
+        #
+        nodetool -host 127.0.0.1 status | grep ^UN | grep "${CS_IP}" && break
+
+        #
+        # exponential backoff for dummies
+        #
+        nodetool -host 127.0.0.1 status | grep ^UN | grep "${CS_IP}" || sleep "$(( ${BACKOFF} * 10 ))"
+    done
+
+    #
+    # fail if the host was not in nodetool
+    #
     nodetool -host 127.0.0.1 status | grep ^UN | grep "${CS_IP}" || exit 1
 done
 

@@ -25,11 +25,15 @@ PREPAREFILES = $(SERVERFILES) $(TMPDIR)/prepare.txt
 
 AGENTFILES = $(SERVERFILES) $(TMPDIR)/agents.txt
 
-.PHONY: $(SERVERFILES) $(PREPAREFILES) $(AGENTFILES)
+MANAGERFILES = $(SERVERFILES) $(TMPDIR)/manager.txt
 
-preflight: $(SERVERFILES) $(PREPAREFILES) $(AGENTFILES)
+TUNNELZONEFILES = $(SERVERFILES) $(TMPDIR)/tunnelzone.txt
+
+.PHONY: $(SERVERFILES) $(PREPAREFILES) $(AGENTFILES) $(MANAGERFILES) $(TUNNELZONEFILES)
+
+preflight: $(SERVERFILES) $(PREPAREFILES) $(AGENTFILES) $(MANAGERFILES) $(TUNNELZONEFILES)
 	test -f "$(ANSWERFILE)" || exit 1
-	for FRAGMENT in agents compute controller gateways nsdb prepare; do \
+	for FRAGMENT in agents compute controller gateways nsdb prepare manager tunnelzone; do \
 		cat usr/bin/..header.sh > usr/bin/$${FRAGMENT}.sh; \
 		cat usr/bin/.$${FRAGMENT}.sh >> usr/bin/$${FRAGMENT}.sh; \
 		chmod 0755 usr/bin/$${FRAGMENT}.sh; \
@@ -41,7 +45,7 @@ $(TMPDIR):
 DEDUP = xargs --no-run-if-empty -n1 -- echo | sort -n -t . -k 1,1 -k 2,2 -k 3,3 -k 4,4 -- | uniq -- | tee --
 
 $(TMPDIR)/controller.txt: $(TMPDIR)
-	echo "$(CONFIG_CONTROLLER_HOST)" | $(DEDUP) $(@)
+	echo "$(CONFIG_CONTROLLER_HOST)" | xargs -n1 echo | head -n1 | $(DEDUP) $(@)
 
 $(TMPDIR)/compute.txt: $(TMPDIR)
 	echo "$(CONFIG_COMPUTE_HOSTS)" | $(DEDUP) $(@)
@@ -50,13 +54,19 @@ $(TMPDIR)/gateways.txt: $(TMPDIR)
 	cat conf/gateways.txt | $(DEDUP) $(@)
 
 $(TMPDIR)/nsdb.txt: $(TMPDIR)
-	(echo "$(CONFIG_CONTROLLER_HOST)"; echo "$(CONFIG_COMPUTE_HOSTS)") | $(DEDUP) $(@)
+	(echo "$(CONFIG_CONTROLLER_HOST)" | xargs -n1 echo | head -n1; echo "$(CONFIG_COMPUTE_HOSTS)" | xargs -n1 echo | head -n2) | $(DEDUP) $(@)
 
 $(TMPDIR)/prepare.txt: $(TMPDIR) $(SERVERFILES)
 	cat $(SERVERFILES) | $(DEDUP) $(@)
 
 $(TMPDIR)/agents.txt: $(TMPDIR) $(SERVERFILES)
-	cat $(SERVERFILES) | $(DEDUP) $(@)
+	(cat $(TMPDIR)/controller.txt; cat $(TMPDIR)/compute.txt; cat $(TMPDIR)/gateways.txt) | $(DEDUP) $(@)
+
+$(TMPDIR)/manager.txt: $(TMPDIR)
+	echo "$(CONFIG_COMPUTE_HOSTS)" | xargs -n1 echo | head -n1 | $(DEDUP) $(@)
+
+$(TMPDIR)/tunnelzone.txt: $(TMPDIR) $(SERVERFILES)
+	echo "$(CONFIG_CONTROLLER_HOST)" | xargs -n1 echo | head -n1 | $(DEDUP) $(@)
 
 #
 #  parallel-ssh options
@@ -71,7 +81,7 @@ ROLES = "'$(shell cat $(TMPDIR)/controller.txt)'" "'$(shell cat $(TMPDIR)/comput
 #
 # this macro will show the list
 #
-PSSH0 = cat "$(TMPDIR)/$(@).txt" | awk '{ print ">>> running pssh task '"$(@)"' on machine [" $$0 "]"; }'
+PSSH0 = cat "$(TMPDIR)/$(@).txt" | awk '{ print ">>> running pssh task '"$(@)"' on machine [" $$0 "]"; }'; sleep 3
 
 #
 # this macro will be used by prepare steps and role install steps
