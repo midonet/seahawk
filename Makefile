@@ -20,37 +20,37 @@ install:
 #
 # prepare the remote machines (install software etc)
 #
-prepare:
+prepare: preflight
 	@$(PSSH)
 
 #
 # install network state database
 #
-nsdb:
-	@$(PSSH)
+nsdb: preflight
+	$(PSSH)
 
 #
 # install midonet agents
 #
-agents:
+agents: preflight
 	@$(PSSH)
 
 #
 # configure nova on the compute nodes (install nova-network and set up libvirt qemu tap device access)
 #
-compute:
+compute: preflight
 	@$(PSSH)
 
 #
 # configure veth pairs and SNAT on the gws
 #
-gateways:
+gateways: preflight
 	@$(PSSH)
 
 #
 # installs midonet-api, midonet-cli, midonet-manager and configures the midonet plugin on the neutron controller
 #
-controller:
+controller: preflight
 	@$(PSSH)
 
 #

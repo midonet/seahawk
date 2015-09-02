@@ -1,2 +1,8 @@
 tmp
 **/*.pyc
+usr/bin/agents.sh
+usr/bin/compute.sh
+usr/bin/controller.sh
+usr/bin/gateways.sh
+usr/bin/nsdb.sh
+usr/bin/prepare.sh

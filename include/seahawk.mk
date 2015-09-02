@@ -29,6 +29,11 @@ AGENTFILES = $(SERVERFILES) $(TMPDIR)/agents.txt
 
 preflight: $(SERVERFILES) $(PREPAREFILES) $(AGENTFILES)
 	test -f "$(ANSWERFILE)" || exit 1
+	for FRAGMENT in agents compute controller gateways nsdb prepare; do \
+		cat usr/bin/..header.sh > usr/bin/$${FRAGMENT}.sh; \
+		cat usr/bin/.$${FRAGMENT}.sh >> usr/bin/$${FRAGMENT}.sh; \
+		chmod 0755 usr/bin/$${FRAGMENT}.sh; \
+	done
 
 $(TMPDIR):
 	@mkdir -pv $(TMPDIR)
@@ -56,12 +61,12 @@ $(TMPDIR)/agents.txt: $(TMPDIR) $(SERVERFILES)
 #
 #  parallel-ssh options
 #
-PSSH_OPTS = -O StrictHostKeyChecking=no
+PSSH_OPTS = -O StrictHostKeyChecking=no --timeout 0 -o $(TMPDIR)/pssh/output/$(@)
 
 #
 # role memberships as shell arguments to the scripts, whitespace separated
 #
-ROLES = "$(shell cat $(TMPDIR)/controller.txt)" "$(shell cat $(TMPDIR)/compute.txt)" "$(shell cat $(TMPDIR)/gateways.txt)" "$(shell cat $(TMPDIR)/nsdb.txt)"
+ROLES = "'$(shell cat $(TMPDIR)/controller.txt)'" "'$(shell cat $(TMPDIR)/compute.txt)'" "'$(shell cat $(TMPDIR)/gateways.txt)'" "'$(shell cat $(TMPDIR)/nsdb.txt)'"
 
 #
 # this macro will show the list
