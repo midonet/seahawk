@@ -86,7 +86,7 @@ PSSH0 = cat "$(TMPDIR)/$(@).txt" | awk '{ print ">>> running pssh task '"$(@)"' 
 #
 # this macro will be used by prepare steps and role install steps
 #
-PSSH1 = pssh $(PSSH_OPTS) -I --hosts="$(TMPDIR)/$(@).txt" -- "tee /tmp/$(@).sh | chmod 0755 /tmp/$(@).sh" <"usr/bin/$(@).sh" 1>/dev/null
+PSSH1 = pssh $(PSSH_OPTS) -I --hosts="$(TMPDIR)/$(@).txt" -- "tee /tmp/$(@).sh; chmod 0755 /tmp/$(@).sh" <"usr/bin/$(@).sh" 1>/dev/null
 
 #
 # upload the script to the destination box
