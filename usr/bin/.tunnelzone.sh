@@ -1,15 +1,13 @@
 
-MEMBERS="${7}"
+MEMBERS="${CONTROLLERS} ${COMPUTE} ${GATEWAYS}"
 
 # midonet-cli -e 'tunnel-zone list' | grep 'name tz' || midonet-cli -e 'tunnel-zone create name tz type vxlan'
 
 TZ="$(midonet-cli -e 'tunnel-zone list' | grep 'name tz' | awk '{print $2;}')"
 
 for MEMBER in ${MEMBERS}; do
-    echo "adding member ${MEMBER} to tunnelzone ${TZ}"
-
-    HNAME="$(echo ${MEMBER} | awk -F':' '{print $1;}')"
-    HIP="$(echo ${MEMBER} | awk -F':' '{print $2;}')"
+    HNAME="$(ssh -o StrictHostKeyChecking=no -q "${MEMBER}" hostname)"
+    HIP="${MEMBER}"
 
     HUID="$(midonet-cli -e "host list name ${HNAME}" | awk '{print $2;}')"
 

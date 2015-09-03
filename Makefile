@@ -61,7 +61,7 @@ manager: preflight
 	@$(PSSH)
 
 tunnelzone: preflight
-	@$(PSSH) "'$(shell tr '\n' ' ' <conf/tunnelzone.txt)'"
+	@$(PSSH)
 
 #
 # includes most of the under-the-hood logic
