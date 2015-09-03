@@ -35,7 +35,7 @@ REBOOTFILES = $(SERVERFILES) $(TMPDIR)/reboot.txt
 
 preflight: $(SERVERFILES) $(PREPAREFILES) $(AGENTFILES) $(MANAGERFILES) $(TUNNELZONEFILES) $(REBOOTFILES)
 	test -f "$(ANSWERFILE)" || exit 1
-	for FRAGMENT in agents compute controller gateways nsdb prepare manager tunnelzone; do \
+	for FRAGMENT in agents compute controller gateways nsdb prepare manager tunnelzone reboot; do \
 		cat usr/bin/..header.sh > usr/bin/$${FRAGMENT}.sh; \
 		cat usr/bin/.$${FRAGMENT}.sh >> usr/bin/$${FRAGMENT}.sh; \
 		chmod 0755 usr/bin/$${FRAGMENT}.sh; \
