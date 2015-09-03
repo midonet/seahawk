@@ -2,7 +2,7 @@
 #
 # Welcome to Seattle.
 #
-all: preflight info install prepare nsdb agents compute gateways controller manager
+all: preflight info install prepare nsdb agents compute gateways controller manager tunnelzone
 	midonet-cli -e host list
 
 info:
@@ -60,6 +60,9 @@ controller: preflight
 manager: preflight
 	@$(PSSH)
 
+#
+# adds the ip of the hosts to the tunnelzone
+#
 tunnelzone: preflight
 	@$(PSSH)
 
