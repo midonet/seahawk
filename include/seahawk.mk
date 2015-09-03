@@ -29,9 +29,11 @@ MANAGERFILES = $(SERVERFILES) $(TMPDIR)/manager.txt
 
 TUNNELZONEFILES = $(SERVERFILES) $(TMPDIR)/tunnelzone.txt
 
-.PHONY: $(SERVERFILES) $(PREPAREFILES) $(AGENTFILES) $(MANAGERFILES) $(TUNNELZONEFILES)
+REBOOTFILES = $(SERVERFILES) $(TMPDIR)/reboot.txt
 
-preflight: $(SERVERFILES) $(PREPAREFILES) $(AGENTFILES) $(MANAGERFILES) $(TUNNELZONEFILES)
+.PHONY: $(SERVERFILES) $(PREPAREFILES) $(AGENTFILES) $(MANAGERFILES) $(TUNNELZONEFILES) $(REBOOTFILES)
+
+preflight: $(SERVERFILES) $(PREPAREFILES) $(AGENTFILES) $(MANAGERFILES) $(TUNNELZONEFILES) $(REBOOTFILES)
 	test -f "$(ANSWERFILE)" || exit 1
 	for FRAGMENT in agents compute controller gateways nsdb prepare manager tunnelzone; do \
 		cat usr/bin/..header.sh > usr/bin/$${FRAGMENT}.sh; \
@@ -67,6 +69,9 @@ $(TMPDIR)/manager.txt: $(TMPDIR)
 
 $(TMPDIR)/tunnelzone.txt: $(TMPDIR) $(SERVERFILES)
 	echo "$(CONFIG_CONTROLLER_HOST)" | xargs -n1 echo | head -n1 | $(DEDUP) $(@)
+
+$(TMPDIR)/reboot.txt: $(TMPDIR) $(SERVERFILES)
+	(echo "$(CONFIG_COMPUTE_HOSTS)"; cat conf/gateways.txt) | $(DEDUP) $(@)
 
 #
 #  parallel-ssh options

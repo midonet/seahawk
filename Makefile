@@ -67,6 +67,12 @@ tunnelzone: preflight
 	@$(PSSH)
 
 #
+# reboot all nodes where selinux is enabled but not the controller
+#
+reboot: preflight
+	@$(PSSH)
+
+#
 # includes most of the under-the-hood logic
 #
 include include/seahawk.mk
