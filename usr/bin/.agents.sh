@@ -1,6 +1,12 @@
 
 yum install -y midolman
 
+hostname -f || cat >/etc/hosts<<EOF
+127.0.0.1 localhost.localdomain localhost
+${IP} $(hostname).local $(hostname)
+
+EOF
+
 #
 # NSDB in midolman.conf
 #
