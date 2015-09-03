@@ -96,5 +96,5 @@ PSSH2 = pssh $(PSSH_OPTS) --print -v --hosts="$(TMPDIR)/$(@).txt" -- "/tmp/$(@).
 #
 # run the script of the role for this box
 #
-PSSH = echo "running pssh task $(@)" && $(PSSH0) && $(PSSH1) && $(PSSH2)
+PSSH = test -f $(TMPDIR)/.SUCCESS_$(@) || ( echo "running pssh task $(@)" && $(PSSH0) && $(PSSH1) && $(PSSH2) && touch $(TMPDIR)/.SUCCESS_$(@) )
 
