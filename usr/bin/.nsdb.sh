@@ -52,6 +52,11 @@ echo ruok | nc 127.0.0.1 2181 | grep imok || exit 1
 sleep 2
 
 for ZK_IP in ${NSDB}; do
+    for BACKOFF in $(seq 1 10); do
+        echo ruok | nc "${ZK_IP}" 2181 | grep imok && break
+        sleep "$(( ${BACKOFF} * 10 ))"
+    done
+
     echo ruok | nc "${ZK_IP}" 2181 | grep imok || exit 1
     echo status | nc "${ZK_IP}" 2181
 done
