@@ -56,3 +56,7 @@ We will install the NSDB (zookeeper and cassandra) on the controller and the fir
 
 If you do not have two compute nodes (for example when using an allinone) we will only install ZK and CS on one node.
 
+Attention: make sure name resolution works, the packstack installer makes heavy use of hostnames in nova.conf etc.
+
+For example if vnc is not working then most likely because your OpenStack controller cannot resolv the hostname of the compute node that is in the vnc settings of it.
+
