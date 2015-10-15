@@ -224,7 +224,7 @@ ln -sfv /etc/neutron/plugins/midonet/midonet.ini /etc/neutron/plugin.ini
 
 su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/midonet/midonet.ini upgrade kilo" neutron
 
-yum install python-neutron-lbaas
+yum install -y python-neutron-lbaas
 
 if [[ "" == "$(grep "LOADBALANCER:Midonet" /etc/neutron/neutron.conf)" ]]; then
     cat >>/etc/neutron/neutron.conf<<EOF
