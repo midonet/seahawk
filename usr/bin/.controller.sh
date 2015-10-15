@@ -1,5 +1,22 @@
 
-ADMIN_TOKEN="$(grep '^admin_token = ' /etc/keystone/keystone.conf | tail -n1 | awk '{print $3;}' | xargs -n1 echo)"
+ADMIN_TOKEN="$(grep '^admin_token = ' /etc/keystone/keystone.conf | tail -n1 | awk -F'=' '{print $2;}' | xargs -n1 echo)"
+
+if [[ "" == "${ADMIN_TOKEN}" ]]; then
+        ADMIN_TOKEN="$(grep '^admin_token =' /etc/keystone/keystone.conf | tail -n1 | awk -F'=' '{print $2;}' | xargs -n1 echo)"
+fi
+
+if [[ "" == "${ADMIN_TOKEN}" ]]; then
+        ADMIN_TOKEN="$(grep '^admin_token= ' /etc/keystone/keystone.conf | tail -n1 | awk -F'=' '{print $2;}' | xargs -n1 echo)"
+fi
+
+if [[ "" == "${ADMIN_TOKEN}" ]]; then
+        ADMIN_TOKEN="$(grep '^admin_token=' /etc/keystone/keystone.conf | tail -n1 | awk -F'=' '{print $2;}' | xargs -n1 echo)"
+fi
+
+if [[ "" == "${ADMIN_TOKEN}" ]]; then
+        echo "admin_token not in keystone.conf, your setup is kaputt"
+        exit 1
+fi
 
 yum install -y midonet-api
 
